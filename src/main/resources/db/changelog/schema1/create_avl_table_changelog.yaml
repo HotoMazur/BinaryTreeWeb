@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: dmytromazurev
+      runOnChange: true
+      changes:
+        - createTable:
+            tableName: avl_tree_nodes
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: height
+                  type: integer
+                  defaultValue: 1
+              - column:
+                  name: left_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_left
+                    references: avl_tree_nodes(id)
+              - column:
+                  name: right_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_right
+                    references: avl_tree_nodes(id)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false

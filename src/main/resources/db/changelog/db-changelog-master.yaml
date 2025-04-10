@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: schema1/create_avl_table_changelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schema1/create_rb_table_chagelog.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: schema1/create_user_table_changelog.yaml
+      relativeToChangelogFile: true
