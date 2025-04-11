@@ -4,7 +4,7 @@ WORKDIR /app
 COPY build.gradle .
 COPY settings.gradle .
 COPY src ./src
-RUN gradle clean build -x test
+RUN gradle build
 
 FROM eclipse-temurin:23-jre-ubi9-minimal
 WORKDIR /app

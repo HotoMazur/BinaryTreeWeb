@@ -14,7 +14,7 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: value
+                  name: node_value
                   type: integer
                   constraints:
                     nullable: false

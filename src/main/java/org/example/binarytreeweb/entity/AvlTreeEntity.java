@@ -16,9 +16,17 @@ public class AvlTreeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name = "node_value", unique = true)
     private Integer value;
+
+    @Column(name = "height")
     private Integer height;
+
+    @Column(name = "left_id")
     private UUID left_id;
+
+    @Column(name = "right_id")
     private UUID right_id;
 
     public AvlTreeEntity(Integer value) {
