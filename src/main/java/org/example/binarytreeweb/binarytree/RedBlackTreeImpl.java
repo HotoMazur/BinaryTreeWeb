@@ -6,6 +6,7 @@ import org.example.binarytreeweb.util.comparator.ComparatorFactory;
 import org.example.binarytreeweb.util.comparator.GenericComparatorFactory;
 import org.example.binarytreeweb.util.constant.TreeColor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class RedBlackTreeImpl<T> {
         this.repository = repository;
     }
 
+    @Transactional
     public RedBlackTreeEntity insertNode(T val) {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
@@ -143,6 +145,7 @@ public class RedBlackTreeImpl<T> {
         }
     }
 
+    @Transactional
     public void deleteNode(T val) {
         if (val == null) return;
 
@@ -412,10 +415,6 @@ public class RedBlackTreeImpl<T> {
             );
             repository.save(redBlackTreeEntity);
         }
-    }
-
-    public Node<T> getRoot() {
-        return root;
     }
 
     public static class Node<T> {

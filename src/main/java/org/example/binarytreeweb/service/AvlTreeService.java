@@ -19,10 +19,12 @@ public class AvlTreeService {
         this.binaryTree = binaryTree;
     }
 
+    @Transactional(readOnly = true)
     public List<AvlTreeEntity> getAllNodes() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public AvlTreeEntity getNodeById(UUID id) {
         return repository.findById(id).orElse(null);
     }

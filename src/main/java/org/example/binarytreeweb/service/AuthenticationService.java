@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationService {
@@ -28,6 +29,8 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
+
+    @Transactional
     public UserEntity signup(RegisterUserDto input) {
         String hashedPassword = passwordEncoder.encode(input.getPassword());
         UserEntity user = new UserEntity(input.getFullName(), input.getEmail(), hashedPassword);
@@ -35,6 +38,7 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public UserEntity authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

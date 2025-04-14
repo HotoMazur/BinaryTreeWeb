@@ -23,3 +23,10 @@ security:
   jwt:
     secret-key: c0f95beb258890a8a4ed4a19b77cda051aea28113825dac5cdb35e9a4e88a3c9
     expiration-time: 3600000
+
+logging:
+  file:
+    name: logs/application.log
+  level:
+    root: INFO
+    org.example.binarytreeweb: DEBUG

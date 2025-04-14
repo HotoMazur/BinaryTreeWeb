@@ -5,6 +5,7 @@ import org.example.binarytreeweb.binarytree.RedBlackTreeImpl;
 import org.example.binarytreeweb.entity.RedBlackTreeEntity;
 import org.example.binarytreeweb.repository.RedBlackTreeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,10 +20,12 @@ public class RedBlackTreeService {
         this.binaryTree = binaryTree;
     }
 
+    @Transactional(readOnly = true)
     public List<RedBlackTreeEntity> getAllNodes() {
         return repository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public RedBlackTreeEntity getNodeById(UUID id) {
         return repository.findById(id).orElse(null);
     }

@@ -6,6 +6,7 @@ import org.example.binarytreeweb.repository.AvlTreeRepository;
 import org.example.binarytreeweb.util.comparator.ComparatorFactory;
 import org.example.binarytreeweb.util.comparator.GenericComparatorFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.UUID;
@@ -39,7 +40,7 @@ public class AVLTreeImpl<T> {
 //    public void draw() {
 //        AVLTreePrinter.printNode(this.root);
 //    }
-
+    @Transactional
     public AvlTreeEntity insertNode(T val) {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
@@ -76,6 +77,7 @@ public class AVLTreeImpl<T> {
         return root;
     }
 
+    @Transactional
     public void deleteNode(T val) {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
