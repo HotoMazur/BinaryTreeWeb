@@ -131,4 +131,32 @@ public class AVlTreeControllerTest {
                 .andExpect(status().isNoContent());
 
     }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = {"USER"})
+    public void testUpdateNodeAvlTree() throws Exception {
+        AvlTreeEntity entity = new AvlTreeEntity(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21, 1, null, null);
+        when(avlTreeService.updateNode(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21)).thenReturn(entity);
+
+        when(avlTreeMapper.AvlTreeEntityToDto(entity))
+                .thenReturn(new AvlTreeDto(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21, 1, null, null));
+
+        mockMvc.perform(put("/api/v1/avl/6f011b14-44b7-45f7-8e48-7d5db12e9f7a")
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                    "id": "6f011b14-44b7-45f7-8e48-7d5db12e9f7a",
+                                    "value": 21,
+                                    "height": 1,
+                                    "left_id": null,
+                                    "right_id": null
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.id", Matchers.is("6f011b14-44b7-45f7-8e48-7d5db12e9f7a")))
+                .andExpect(jsonPath("$.value", Matchers.is(21)))
+                .andExpect(jsonPath("$.height", Matchers.is(1)));
+    }
 }

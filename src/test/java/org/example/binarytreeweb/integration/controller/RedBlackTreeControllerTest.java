@@ -93,7 +93,7 @@ public class RedBlackTreeControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", roles = {"USER"})
-    public void testAddNodeAvlTree() throws Exception {
+    public void testAddNodeRedBlackTree() throws Exception {
         RedBlackTreeEntity entity = new RedBlackTreeEntity(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21, "BLACK", null, null, null);
         when(redBlackTreeService.addNode(21)).thenReturn(entity);
 
@@ -117,7 +117,7 @@ public class RedBlackTreeControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", roles = {"USER"})
-    public void testDeleteNodeAvlTree() throws Exception {
+    public void testDeleteNodeRedBlackTree() throws Exception {
 
         mockMvc.perform(delete("/api/v1/rb")
                         .with(csrf())
@@ -129,5 +129,34 @@ public class RedBlackTreeControllerTest {
                                 """))
                 .andExpect(status().isNoContent());
 
+    }
+
+    @Test
+    @WithMockUser(username = "testuser", roles = {"USER"})
+    public void testUpdateNodeRedBlackTree() throws Exception {
+        RedBlackTreeEntity entity = new RedBlackTreeEntity(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21, "BLACK", null, null, null);
+        when(redBlackTreeService.updateNode(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21)).thenReturn(entity);
+
+        when(redBlackTreeMapper.redBlackTreeEntityToDto(entity))
+                .thenReturn(new RedBlackTreeDto(UUID.fromString("6f011b14-44b7-45f7-8e48-7d5db12e9f7a"), 21, "BLACK", null, null, null));
+
+        mockMvc.perform(put("/api/v1/rb/6f011b14-44b7-45f7-8e48-7d5db12e9f7a")
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                    "id": "6f011b14-44b7-45f7-8e48-7d5db12e9f7a",
+                                    "value": 21,
+                                    "color": "BLACK",
+                                    "parent_id": null,
+                                    "left_id": null,
+                                    "right_id": null
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.id", Matchers.is("6f011b14-44b7-45f7-8e48-7d5db12e9f7a")))
+                .andExpect(jsonPath("$.value", Matchers.is(21)))
+                .andExpect(jsonPath("$.color", Matchers.is("BLACK")));
     }
 }

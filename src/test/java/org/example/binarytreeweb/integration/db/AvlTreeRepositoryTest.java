@@ -25,17 +25,14 @@ public class AvlTreeRepositoryTest {
 
     @Test
     public void testInsertNodeAvlTree() throws Exception {
-        // Create a new node
         AvlTreeEntity node = new AvlTreeEntity();
         node.setValue(10);
         node.setHeight(1);
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Verify that the node was saved correctly
         AvlTreeEntity savedNode = repository.findById(node.getId()).orElse(null);
         assertNotNull(savedNode);
         assertEquals(node.getValue(), savedNode.getValue());
@@ -50,40 +47,32 @@ public class AvlTreeRepositoryTest {
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Delete the node from the database
         repository.delete(node);
 
-        // Verify that the node was deleted correctly
         AvlTreeEntity deletedNode = repository.findById(node.getId()).orElse(null);
         assertNull(deletedNode);
     }
 
     @Test
     public void testFindNodeById() throws Exception {
-        // Create a new node
         AvlTreeEntity node = new AvlTreeEntity();
         node.setValue(30);
         node.setHeight(1);
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Find the node by ID
         AvlTreeEntity foundNode = repository.findById(node.getId()).orElse(null);
 
-        // Verify that the node was found correctly
         assertNotNull(foundNode);
         assertEquals(node.getValue(), foundNode.getValue());
     }
 
     @Test
     public void findAllNodes() throws Exception {
-        // Create a new node
         AvlTreeEntity node1 = new AvlTreeEntity();
         node1.setValue(40);
         node1.setHeight(1);
@@ -96,15 +85,31 @@ public class AvlTreeRepositoryTest {
         node2.setLeft_id(null);
         node2.setRight_id(null);
 
-        // Save the nodes to the database
         repository.save(node1);
         repository.save(node2);
 
-        // Find all nodes in the database
         Iterable<AvlTreeEntity> nodes = repository.findAll();
 
-        // Verify that the nodes were found correctly
         assertNotNull(nodes);
         assertTrue(nodes.iterator().hasNext());
+    }
+
+    @Test
+    public void updateNode() throws Exception {
+        AvlTreeEntity node = new AvlTreeEntity();
+        node.setValue(60);
+        node.setHeight(1);
+        node.setLeft_id(null);
+        node.setRight_id(null);
+
+        repository.save(node);
+
+        node.setValue(70);
+        repository.save(node);
+
+        AvlTreeEntity updatedNode = repository.findById(node.getId()).orElse(null);
+
+        assertNotNull(updatedNode);
+        assertEquals(70, updatedNode.getValue());
     }
 }

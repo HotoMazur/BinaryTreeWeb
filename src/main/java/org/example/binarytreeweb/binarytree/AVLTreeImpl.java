@@ -37,7 +37,7 @@ public class AVLTreeImpl<T> {
         }
     }
 
-    @Transactional
+    @Transactional()
     public AvlTreeEntity insertNode(T val) {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");

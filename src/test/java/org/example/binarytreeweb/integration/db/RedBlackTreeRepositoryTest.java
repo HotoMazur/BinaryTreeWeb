@@ -26,7 +26,6 @@ public class RedBlackTreeRepositoryTest {
 
     @Test
     public void testInsertNodeRBTree() throws Exception {
-        // Create a new node
         RedBlackTreeEntity node = new RedBlackTreeEntity();
         node.setValue(10);
         node.setColor("BLACK");
@@ -34,10 +33,8 @@ public class RedBlackTreeRepositoryTest {
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Verify that the node was saved correctly
         RedBlackTreeEntity savedNode = repository.findById(node.getId()).orElse(null);
         assertNotNull(savedNode);
         assertEquals(node.getValue(), savedNode.getValue());
@@ -45,7 +42,6 @@ public class RedBlackTreeRepositoryTest {
 
     @Test
     public void testDeleteNodeRBTree() throws Exception {
-        // Create a new node
         RedBlackTreeEntity node = new RedBlackTreeEntity();
         node.setValue(10);
         node.setColor("BLACK");
@@ -53,20 +49,16 @@ public class RedBlackTreeRepositoryTest {
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Delete the node from the database
         repository.delete(node);
 
-        // Verify that the node was deleted correctly
         RedBlackTreeEntity deletedNode = repository.findById(node.getId()).orElse(null);
         assertNull(deletedNode);
     }
 
     @Test
     public void testFindNodeById() throws Exception {
-        // Create a new node
         RedBlackTreeEntity node = new RedBlackTreeEntity();
         node.setValue(10);
         node.setColor("BLACK");
@@ -74,28 +66,22 @@ public class RedBlackTreeRepositoryTest {
         node.setLeft_id(null);
         node.setRight_id(null);
 
-        // Save the node to the database
         repository.save(node);
 
-        // Find the node by ID
         RedBlackTreeEntity foundNode = repository.findById(node.getId()).orElse(null);
 
-        // Verify that the node was found correctly
         assertNotNull(foundNode);
         assertEquals(node.getValue(), foundNode.getValue());
     }
 
     @Test
     public void findAllNodes() throws Exception {
-        // Create a new node
         RedBlackTreeEntity node1 = new RedBlackTreeEntity();
         node1.setValue(10);
         node1.setColor("BLACK");
         node1.setParent_id(null);
         node1.setLeft_id(null);
         node1.setRight_id(null);
-
-
 
         RedBlackTreeEntity node2= new RedBlackTreeEntity();
         node2.setValue(20);
@@ -107,12 +93,30 @@ public class RedBlackTreeRepositoryTest {
         repository.save(node1);
         repository.save(node2);
 
-        // Find all nodes in the database
         Iterable<RedBlackTreeEntity> nodes = repository.findAll();
 
-        // Verify that the nodes were found correctly
         assertNotNull(nodes);
         assertTrue(nodes.iterator().hasNext());
+    }
+
+    @Test
+    public void updateNode() throws Exception {
+        RedBlackTreeEntity node = new RedBlackTreeEntity();
+        node.setValue(10);
+        node.setColor("BLACK");
+        node.setParent_id(null);
+        node.setLeft_id(null);
+        node.setRight_id(null);
+
+        repository.save(node);
+
+        node.setValue(20);
+        repository.save(node);
+
+        RedBlackTreeEntity updatedNode = repository.findById(node.getId()).orElse(null);
+
+        assertNotNull(updatedNode);
+        assertEquals(20, updatedNode.getValue());
     }
 
 }
