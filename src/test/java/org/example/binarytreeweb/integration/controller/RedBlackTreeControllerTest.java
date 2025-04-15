@@ -127,7 +127,7 @@ public class RedBlackTreeControllerTest {
                                     "value": 21
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
     }
 }

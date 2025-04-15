@@ -128,7 +128,7 @@ public class AVlTreeControllerTest {
                                     "value": 21
                                 }
                                 """))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
     }
 }

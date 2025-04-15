@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -36,15 +37,14 @@ public class AVLTreeImpl<T> {
         }
     }
 
-//    @Override
-//    public void draw() {
-//        AVLTreePrinter.printNode(this.root);
-//    }
     @Transactional
     public AvlTreeEntity insertNode(T val) {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
         }
+
+        this.root = fetchRootFromDatabase();
+
         this.root = insertNodeRec(this.root, val);
         Node<T> newNode = findNodeByValue(val);
         return new AvlTreeEntity(newNode.id, (Integer) val, newNode.height, null, null);
@@ -82,6 +82,8 @@ public class AVLTreeImpl<T> {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
         }
+
+        this.root = fetchRootFromDatabase();
 
         Node<T> nodeToDelete = findNodeByValue(val);
         if (nodeToDelete != null) {
@@ -256,5 +258,117 @@ public class AVLTreeImpl<T> {
         } else {
             return findNodeByValueRec(root.right, val);
         }
+    }
+
+    @Transactional
+    public AvlTreeEntity updateNode(UUID id, T newVal) {
+        if (id == null || newVal == null) {
+            throw new IllegalArgumentException("ID and value cannot be null");
+        }
+
+        // Fetch the root from the database
+        this.root = fetchRootFromDatabase();
+
+        // Find the node by ID
+        Node<T> nodeToUpdate = findNodeById(this.root, id);
+        if (nodeToUpdate == null) {
+            throw new IllegalArgumentException("Node with ID " + id + " not found");
+        }
+
+        // Update the node's value
+        nodeToUpdate.data = newVal;
+
+        // Rebalance the tree starting from the updated node
+        this.root = rebalanceTree(this.root);
+
+        // Save the updated node to the database
+        updateNodeInDatabase(nodeToUpdate);
+
+        return new AvlTreeEntity(nodeToUpdate.id, (Integer) newVal, nodeToUpdate.height, null, null);
+    }
+
+    private Node<T> findNodeById(Node<T> root, UUID id) {
+        if (id == null) {
+            return null;
+        }
+
+        Optional<AvlTreeEntity> entityOpt = repository.findById(id);
+        if (entityOpt.isEmpty()) {
+            return null;
+        }
+
+        AvlTreeEntity entity = entityOpt.get();
+        Node<T> node = new Node<>((T) entity.getValue());
+        node.id = entity.getId();
+        node.height = entity.getHeight();
+        node.left = fetchChildNode(entity.getLeft_id());
+        node.right = fetchChildNode(entity.getRight_id());
+
+        return node;
+    }
+
+    private Node<T> rebalanceTree(Node<T> root) {
+        if (root == null) {
+            return null;
+        }
+
+        root.left = rebalanceTree(root.left);
+        root.right = rebalanceTree(root.right);
+
+        root = makeBalance(root, root.data);
+
+        updateNodeInDatabase(root);
+
+        return root;
+    }
+
+    private void updateNodeInDatabase(Node<T> node) {
+        if (node == null) return;
+
+        UUID leftId = (node.left != null) ? node.left.id : null;
+        UUID rightId = (node.right != null) ? node.right.id : null;
+
+        AvlTreeEntity avlTreeEntity = new AvlTreeEntity(
+                node.id,
+                (Integer) node.data,
+                node.height,
+                leftId,
+                rightId
+        );
+
+        repository.save(avlTreeEntity);
+    }
+
+    private Node<T> fetchRootFromDatabase() {
+        Optional<AvlTreeEntity> rootEntityOpt = repository.findRootNode();
+        if (rootEntityOpt.isEmpty()) {
+            return null;
+        }
+
+        AvlTreeEntity rootEntity = rootEntityOpt.get();
+        Node<T> rootNode = new Node<>((T) rootEntity.getValue());
+        rootNode.id = rootEntity.getId();
+        rootNode.height = rootEntity.getHeight();
+        rootNode.left = fetchChildNode(rootEntity.getLeft_id());
+        rootNode.right = fetchChildNode(rootEntity.getRight_id());
+        return rootNode;
+    }
+
+    private Node<T> fetchChildNode(UUID nodeId) {
+        if (nodeId == null) {
+            return null;
+        }
+
+        AvlTreeEntity childEntity = repository.findById(nodeId).orElse(null);
+        if (childEntity == null) {
+            return null;
+        }
+
+        Node<T> childNode = new Node<>((T) childEntity.getValue());
+        childNode.id = childEntity.getId();
+        childNode.height = childEntity.getHeight();
+        childNode.left = fetchChildNode(childEntity.getLeft_id());
+        childNode.right = fetchChildNode(childEntity.getRight_id());
+        return childNode;
     }
 }

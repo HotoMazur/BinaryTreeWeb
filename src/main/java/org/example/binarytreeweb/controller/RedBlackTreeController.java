@@ -41,9 +41,15 @@ public class RedBlackTreeController {
         return redBlackTreeMapper.redBlackTreeEntityToDto(redBlackTreeService.addNode(redBlackTreeDto.getValue()));
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     public void deleteNode(@RequestBody RedBlackTreeDto redBlackTreeDto) {
         redBlackTreeService.deleteNode(redBlackTreeDto.getValue());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
+    public RedBlackTreeDto updateNode(@PathVariable UUID id, @RequestBody RedBlackTreeDto redBlackTreeDto) {
+        return redBlackTreeMapper.redBlackTreeEntityToDto(redBlackTreeService.updateNode(id, redBlackTreeDto.getValue()));
     }
 }

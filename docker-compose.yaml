@@ -13,6 +13,8 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
     stdin_open: true
+    volumes:
+      - ./logs:/app/logs
     tty: true
     depends_on:
       db:

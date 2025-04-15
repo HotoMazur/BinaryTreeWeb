@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -26,6 +27,8 @@ public class RedBlackTreeImpl<T> {
         if (val == null) {
             throw new IllegalArgumentException("Null values are not allowed");
         }
+        this.root = fetchRootFromDatabase();
+
         Node<T> node = root;
         Node<T> parent = null;
 
@@ -148,6 +151,8 @@ public class RedBlackTreeImpl<T> {
     @Transactional
     public void deleteNode(T val) {
         if (val == null) return;
+
+        this.root = fetchRootFromDatabase();
 
         Node<T> node = findNode(val);
         if (node == null) return;
@@ -415,6 +420,85 @@ public class RedBlackTreeImpl<T> {
             );
             repository.save(redBlackTreeEntity);
         }
+    }
+
+    @Transactional
+    public RedBlackTreeEntity updateNode(UUID id, T newVal) {
+        if (id == null || newVal == null) {
+            throw new IllegalArgumentException("ID and value cannot be null");
+        }
+
+        this.root = fetchRootFromDatabase();
+
+        Node<T> nodeToUpdate = findNodeById(id);
+        if (nodeToUpdate == null) {
+            throw new IllegalArgumentException("Node with ID " + id + " not found");
+        }
+
+        nodeToUpdate.data = newVal;
+
+        updateNodeInDatabase(nodeToUpdate);
+
+        fixPropertiesAfterInsertion(nodeToUpdate);
+
+        if (root != null) {
+            root.color = TreeColor.BLACK;
+            updateNodeInDatabase(root);
+        }
+        return new RedBlackTreeEntity(nodeToUpdate.id, (Integer) newVal, nodeToUpdate.color.name(), nodeToUpdate.parent.id, nodeToUpdate.left.id, nodeToUpdate.right.id);
+    }
+
+    private Node<T> findNodeById(UUID id) {
+        if (id == null) {
+            return null;
+        }
+
+        Optional<RedBlackTreeEntity> entityOpt = repository.findById(id);
+        if (entityOpt.isEmpty()) {
+            return null;
+        }
+
+        RedBlackTreeEntity entity = entityOpt.get();
+        Node<T> node = new Node<>((T) entity.getValue());
+        node.id = entity.getId();
+        node.color = TreeColor.valueOf(entity.getColor());
+        node.left = fetchChildNode(entity.getLeft_id());
+        node.right = fetchChildNode(entity.getRight_id());
+
+        return node;
+    }
+
+    private Node<T> fetchRootFromDatabase() {
+        Optional<RedBlackTreeEntity> rootEntityOpt = repository.findRootNode();
+        if (rootEntityOpt.isEmpty()) {
+            return null;
+        }
+
+        RedBlackTreeEntity rootEntity = rootEntityOpt.get();
+        Node<T> rootNode = new Node<>((T) rootEntity.getValue());
+        rootNode.id = rootEntity.getId();
+        rootNode.color = TreeColor.valueOf(rootEntity.getColor());
+        rootNode.left = fetchChildNode(rootEntity.getLeft_id());
+        rootNode.right = fetchChildNode(rootEntity.getRight_id());
+        return rootNode;
+    }
+
+    private Node<T> fetchChildNode(UUID nodeId) {
+        if (nodeId == null) {
+            return null;
+        }
+
+        RedBlackTreeEntity childEntity = repository.findById(nodeId).orElse(null);
+        if (childEntity == null) {
+            return null;
+        }
+
+        Node<T> childNode = new Node<>((T) childEntity.getValue());
+        childNode.id = childEntity.getId();
+        childNode.color = TreeColor.valueOf(childEntity.getColor());
+        childNode.left = fetchChildNode(childEntity.getLeft_id());
+        childNode.right = fetchChildNode(childEntity.getRight_id());
+        return childNode;
     }
 
     public static class Node<T> {

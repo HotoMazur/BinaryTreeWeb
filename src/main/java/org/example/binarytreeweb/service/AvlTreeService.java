@@ -33,8 +33,11 @@ public class AvlTreeService {
         return binaryTree.insertNode(value);
     }
 
-    @Transactional
     public void deleteNode(Integer value) {
         binaryTree.deleteNode(value);
+    }
+
+    public AvlTreeEntity updateNode(UUID id, Integer value) {
+        return binaryTree.updateNode(id, value);
     }
 }

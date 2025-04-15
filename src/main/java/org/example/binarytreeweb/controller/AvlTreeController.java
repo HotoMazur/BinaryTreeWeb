@@ -41,9 +41,15 @@ public class AvlTreeController {
         return avlTreeMapper.AvlTreeEntityToDto(avlTreeService.addNode(avlTreeDto.getValue()));
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     public void deleteNode(@RequestBody AvlTreeDto avlTreeDto) {
         avlTreeService.deleteNode(avlTreeDto.getValue());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
+    public AvlTreeDto updateNode(@PathVariable UUID id, @RequestBody AvlTreeDto avlTreeDto) {
+        return avlTreeMapper.AvlTreeEntityToDto(avlTreeService.updateNode(id, avlTreeDto.getValue()));
     }
 }

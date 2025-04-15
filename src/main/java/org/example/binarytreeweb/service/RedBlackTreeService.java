@@ -37,4 +37,8 @@ public class RedBlackTreeService {
     public void deleteNode(Integer value) {
         binaryTree.deleteNode(value);
     }
+
+    public RedBlackTreeEntity updateNode(UUID id, Integer value) {
+        return binaryTree.updateNode(id, value);
+    }
 }
