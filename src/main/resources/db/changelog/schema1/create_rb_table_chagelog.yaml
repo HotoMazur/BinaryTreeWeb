@@ -1,0 +1,48 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: dmytromazurev
+      runOnChange: true
+      changes:
+        - createTable:
+            tableName: red_black_tree_nodes
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: node_value
+                  type: integer
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: varchar(5)
+                  defaultValue: 'BLACK'
+              - column:
+                  name: parent_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_parent
+                    references: red_black_tree_nodes(id)
+              - column:
+                  name: left_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_left
+                    references: red_black_tree_nodes(id)
+              - column:
+                  name: right_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_right
+                    references: red_black_tree_nodes(id)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
